@@ -26,53 +26,53 @@ File Layout
 ├── cloudbuild.yaml
 ├── README.md
 
-Directory Structure Explanation
+📂 Directory Structure Explanation
 
-dags/
+📁 dags/
 
-Contains DAGs that orchestrate workflows in Cloud Composer.
+Contains DAGs that orchestrate workflows in Cloud Composer:
 
-bq_dag.py - DAG for BigQuery workflows.
+📝 bq_dag.py - DAG for BigQuery workflows.
 
-pyspark_dag.py - DAG for PySpark-based workflows.
+📝 pyspark_dag.py - DAG for PySpark-based workflows.
 
-data/
+📁 data/
 
-Contains SQL scripts and ingestion logic.
+Contains SQL scripts and ingestion logic:
 
-BQ/ - SQL scripts for creating BigQuery tables.
+BQ/ - SQL scripts for creating BigQuery tables:
 
-bronzeTable.sql, silverTable.sql, goldTable.sql
+📄 bronzeTable.sql, silverTable.sql, goldTable.sql
 
-DBs/ - SQL scripts for initializing databases.
+DBs/ - SQL scripts for initializing databases:
 
-retailerdb.sql, supplierdb.sql
+📄 retailerdb.sql, supplierdb.sql
 
-INGESTION/ - Python scripts for data ingestion.
+INGESTION/ - Python scripts for data ingestion:
 
-customerReviews_API.py - Fetches customer reviews from API.
+🖥️ customerReviews_API.py - Fetches customer reviews from API.
 
-retailerMysqlToLanding.py - Extracts data from retailer MySQL database.
+🖥️ retailerMysqlToLanding.py - Extracts data from retailer MySQL database.
 
-supplierMysqlToLanding.py - Extracts data from supplier MySQL database.
+🖥️ supplierMysqlToLanding.py - Extracts data from supplier MySQL database.
 
-utils/
+📁 utils/
 
-Utility scripts to assist with deployment.
+Utility scripts to assist with deployment:
 
-add_dags_to_composer.py - Syncs DAGs with Cloud Composer after merging changes.
+🛠️ add_dags_to_composer.py - Syncs DAGs with Cloud Composer after merging changes.
 
-requirements.txt - Contains dependencies required for utilities.
+📜 requirements.txt - Contains dependencies required for utilities.
 
-cloudbuild.yaml
+📁 cloudbuild.yaml
 
 Cloud Build configuration file to automate CI/CD for Cloud Composer.
 
-README.md
+📁 README.md
 
 This documentation file explaining the project structure and workflow.
 
-Automated CI/CD Workflow
+🚀 Automated CI/CD Workflow
 
 Develop and Push Changes
 
@@ -102,5 +102,5 @@ Verify DAG Execution
 
 Check if the new DAGs and updates behave as expected in Cloud Composer.
 
-This setup ensures a seamless CI/CD pipeline for managing workflows in Cloud Composer with Cloud Build integration.
+This setup ensures a seamless CI/CD pipeline for managing workflows in Cloud Composer with Cloud Build integration. 🚀
 
