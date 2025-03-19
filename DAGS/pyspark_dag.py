@@ -14,21 +14,21 @@ PROJECT_ID = "avd-databricks-demo"
 REGION = "us-east1"
 CLUSTER_NAME = "my-cluster-demo"
 
-GCS_JOB_FILE_1 = "gs://retailer-raw-data-11111/scripts/retailerMysqlToLanding.py"
+GCS_JOB_FILE_1 = "/home/airflow/gcs/data/INGESTION/retailerMysqlToLanding.py"
 PYSPARK_JOB_1 = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
     "pyspark_job": {"main_python_file_uri": GCS_JOB_FILE_1},
 }
 
-GCS_JOB_FILE_2 = "gs://retailer-raw-data-11111/scripts/supplierMysqlToLanding.py"
+GCS_JOB_FILE_2 = "/home/airflow/gcs/data/INGESTION/supplierMysqlToLanding.py"
 PYSPARK_JOB_2 = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
     "pyspark_job": {"main_python_file_uri": GCS_JOB_FILE_2},
 }
 
-GCS_JOB_FILE_3 = "gs://retailer-raw-data-11111/scripts/customerReviews_API.py"
+GCS_JOB_FILE_3 = "/home/airflow/gcs/data/INGESTION/customerReviews_API.py"
 PYSPARK_JOB_3 = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},

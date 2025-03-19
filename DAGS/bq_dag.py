@@ -7,9 +7,9 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 # Define constants
 PROJECT_ID = "avd-databricks-demo"
 LOCATION = "US"
-SQL_FILE_PATH_1 = "/home/airflow/gcs/data/bronzeTable.sql"
-SQL_FILE_PATH_2 = "/home/airflow/gcs/data/silverTable.sql"
-SQL_FILE_PATH_3 = "/home/airflow/gcs/data/goldTable.sql"
+SQL_FILE_PATH_1 = "/home/airflow/gcs/data/BQ/bronzeTable.sql"
+SQL_FILE_PATH_2 = "/home/airflow/gcs/data/BQ/silverTable.sql"
+SQL_FILE_PATH_3 = "/home/airflow/gcs/data/BQ/goldTable.sql"
 
 # Read SQL query from file
 def read_sql_file(file_path):
