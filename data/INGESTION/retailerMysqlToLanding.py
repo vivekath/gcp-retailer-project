@@ -5,26 +5,23 @@ import datetime
 import json
 
 # Initialize Spark Session
-spark = SparkSession.builder.appName("RetailerMySQLToBronze").getOrCreate()
+spark = SparkSession.builder.appName("RetailerMySQLToLanding").getOrCreate()
 
 # Google Cloud Storage (GCS) Configuration
-GCS_BUCKET = "retailer-raw-data-11111"
-BRONZE_PATH = f"gs://{GCS_BUCKET}/bronze/retailer-db/"
-ARCHIVE_PATH = f"gs://{GCS_BUCKET}/bronze/retailer-db/archive/"
-CONFIG_FILE_PATH = f"gs://{GCS_BUCKET}/configs/config.csv"
-
-# Log Storage in GCS
-LOG_PATH = f"gs://{GCS_BUCKET}/pipeline_logs/"
+GCS_BUCKET = "datalake-project-bkt-19032025"
+LANDING_PATH = f"gs://{GCS_BUCKET}/landing/retailer-db/"
+ARCHIVE_PATH = f"gs://{GCS_BUCKET}/landing/retailer-db/archive/"
+CONFIG_FILE_PATH = f"gs://{GCS_BUCKET}/configs/retailer_config.csv"
 
 # BigQuery Configuration
 BQ_PROJECT = "avd-databricks-demo"
-BQ_AUDIT_TABLE = f"{BQ_PROJECT}.bronze_dataset.audit_log"
-BQ_LOG_TABLE = f"{BQ_PROJECT}.bronze_dataset.pipeline_logs"
-BQ_TEMP_PATH = f"{GCS_BUCKET}/temp/"
+BQ_AUDIT_TABLE = f"{BQ_PROJECT}.temp_dataset.audit_log"
+BQ_LOG_TABLE = f"{BQ_PROJECT}.temp_dataset.pipeline_logs"
+BQ_TEMP_PATH = f"{GCS_BUCKET}/temp/"  
 
 # MySQL Configuration
 MYSQL_CONFIG = {
-    "url": "jdbc:mysql://34.173.242.71:3306/retailer?useSSL=false&allowPublicKeyRetrieval=true",
+    "url": "jdbc:mysql://34.55.68.64:3306/retailerDB?useSSL=false&allowPublicKeyRetrieval=true",
     "driver": "com.mysql.cj.jdbc.Driver",
     "user": "myuser",
     "password": "mypass"
@@ -51,15 +48,18 @@ def log_event(event_type, message, table=None):
 def save_logs_to_gcs():
     """Save logs to a JSON file and upload to GCS"""
     log_filename = f"pipeline_log_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.json"
-    log_filepath = f"{LOG_PATH}/{log_filename}"
-
+    log_filepath = f"temp/pipeline_logs/{log_filename}"  
+    
     json_data = json.dumps(log_entries, indent=4)
 
+    # Get GCS bucket
     bucket = storage_client.bucket(GCS_BUCKET)
     blob = bucket.blob(log_filepath)
+    
+    # Upload JSON data as a file
     blob.upload_from_string(json_data, content_type="application/json")
 
-    print(f"✅ Logs successfully saved to GCS at {log_filepath}")
+    print(f"✅ Logs successfully saved to GCS at gs://{GCS_BUCKET}/{log_filepath}")
 
 def save_logs_to_bigquery():
     """Save logs to BigQuery"""
@@ -93,7 +93,7 @@ def get_latest_watermark(table_name):
 
 # Function to Move Existing Files to Archive
 def move_existing_files_to_archive(table):
-    blobs = list(storage_client.bucket(GCS_BUCKET).list_blobs(prefix=f"bronze/retailer-db/{table}/"))
+    blobs = list(storage_client.bucket(GCS_BUCKET).list_blobs(prefix=f"landing/retailer-db/{table}/"))
     existing_files = [blob.name for blob in blobs if blob.name.endswith(".json")]
 
     if not existing_files:
@@ -108,7 +108,7 @@ def move_existing_files_to_archive(table):
         year, month, day = date_part[-4:], date_part[2:4], date_part[:2]
 
         # Move to Archive
-        archive_path = f"bronze/retailer-db/archive/{table}/{year}/{month}/{day}/{file.split('/')[-1]}"
+        archive_path = f"landing/retailer-db/archive/{table}/{year}/{month}/{day}/{file.split('/')[-1]}"
         destination_blob = storage_client.bucket(GCS_BUCKET).blob(archive_path)
 
         # Copy file to archive and delete original
@@ -118,7 +118,7 @@ def move_existing_files_to_archive(table):
         log_event("INFO", f"Moved {file} to {archive_path}", table=table)
 
 # Function to Extract Data from MySQL and Save to GCS
-def extract_and_save_to_bronze(table, load_type, watermark_col):
+def extract_and_save_to_landing(table, load_type, watermark_col):
     try:
         # Get Latest Watermark
         last_watermark = get_latest_watermark(table) if load_type.lower() == "incremental" else None
@@ -146,7 +146,7 @@ def extract_and_save_to_bronze(table, load_type, watermark_col):
 
         # Generate File Path in GCS
         today = datetime.datetime.today().strftime('%d%m%Y')
-        JSON_FILE_PATH = f"bronze/retailer-db/{table}/{table}_{today}.json"
+        JSON_FILE_PATH = f"landing/retailer-db/{table}/{table}_{today}.json"
 
         # Upload JSON to GCS
         bucket = storage_client.bucket(GCS_BUCKET)
@@ -160,11 +160,11 @@ def extract_and_save_to_bronze(table, load_type, watermark_col):
             (table, load_type, df.count(), datetime.datetime.now(), "SUCCESS")
         ], ["tablename", "load_type", "record_count", "load_timestamp", "status"])
 
-        audit_df.write.format("bigquery") \
-            .option("table", BQ_AUDIT_TABLE) \
-            .option("temporaryGcsBucket", "retailer-raw-data-11111/temp") \
-            .mode("append") \
-            .save()
+        (audit_df.write.format("bigquery")
+            .option("table", BQ_AUDIT_TABLE)
+            .option("temporaryGcsBucket", GCS_BUCKET)
+            .mode("append")
+            .save())
 
         log_event("SUCCESS", f"Audit log updated for {table}", table=table)
 
@@ -177,7 +177,7 @@ for row in config_df.collect():
     if row["is_active"] == '1':  
         db, src, table, load_type, watermark, _, targetpath = row
         move_existing_files_to_archive(table)
-        extract_and_save_to_bronze(table, load_type, watermark)
-
+        extract_and_save_to_landing(table, load_type, watermark)
+        
 save_logs_to_gcs()
 save_logs_to_bigquery()
