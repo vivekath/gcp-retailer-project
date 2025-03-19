@@ -1,54 +1,106 @@
-# composer-ci-cd
+Composer CI/CD
 
-This code looks into a way to implement CI/CD in Cloud Composer using Cloud Build and GitHub.
+This guide outlines an approach to implementing CI/CD in Cloud Composer using Cloud Build and GitHub.
 
-## File Layout
+File Layout
 
-```
 .
 ├── dags
-│   ├── stock_data_dag.py
-│   └── stock_data_dag_test.py
-├── dags-to-composer.cloudbuild.yaml
-├── requirements-composer.txt
-├── requirements-test.txt
-├── requirements.txt
-├── test-dags.cloudbuild.yaml
-└── utils
-    ├── add_dags_to_composer.py
-    └── requirements.txt
+│   ├── bq_dag.py
+│   ├── pyspark_dag.py
+├── data
+│   ├── BQ
+│   │   ├── bronzeTable.sql
+│   │   ├── silverTable.sql
+│   │   ├── goldTable.sql
+│   ├── DBs
+│   │   ├── retailerdb.sql
+│   │   ├── supplierdb.sql
+│   ├── INGESTION
+│   │   ├── customerReviews_API.py
+│   │   ├── retailerMysqlToLanding.py
+│   │   ├── supplierMysqlToLanding.py
+├── utils
+│   ├── add_dags_to_composer.py
+│   ├── requirements.txt
+├── cloudbuild.yaml
+├── README.md
 
-```
+Directory Structure Explanation
 
--dags: 
-This directory contains the DAG and the DAG test files.   
-- stock_data_dag.py file is the stock data DAG we developed in a previous blog which gets deployed to Cloud Composer.    
-- stock_data_dag_test.py contains dag validation tests to ensure the reliability and correctness of the workflows.  
+dags/
 
--requirements-composer.txt - 
-Contains the packages required to update the Cloud Composer environment.  
+Contains DAGs that orchestrate workflows in Cloud Composer.
 
--requirements-test.txt - 
-Contains the packages required by the DAG test file.  
+bq_dag.py - DAG for BigQuery workflows.
 
--requirements.txt - 
-Contains the packages required by the DAG file.  
+pyspark_dag.py - DAG for PySpark-based workflows.
 
--test-dags.cloudbuild.yaml - 
-A YAML configuration file for the Cloud Build DAG validation checks.  
+data/
 
--utils:  
-The utility contains a script  
-- add_dags_to_composer.py - syncs the DAGs with your Cloud Composer environment after they are merged to the main branch in the repository.  
-- requirements.txt - contains the packages required by the add_dags_to_composer.py.  
+Contains SQL scripts and ingestion logic.
 
+BQ/ - SQL scripts for creating BigQuery tables.
 
-## Automated Workflow
+bronzeTable.sql, silverTable.sql, goldTable.sql
 
-1. Make a change to a DAG and push that change to a development branch in your repository
-2. Open a pull request against the main branch of your repository
-3. Cloud Build runs unit tests to check your DAG is valid
-4. If your pull request is approved and merged into your main branch
-5. Cloud Build syncs your development Cloud Composer environment with these new changes 
-6. You verify that the DAG behaves as expected in your development environment
+DBs/ - SQL scripts for initializing databases.
+
+retailerdb.sql, supplierdb.sql
+
+INGESTION/ - Python scripts for data ingestion.
+
+customerReviews_API.py - Fetches customer reviews from API.
+
+retailerMysqlToLanding.py - Extracts data from retailer MySQL database.
+
+supplierMysqlToLanding.py - Extracts data from supplier MySQL database.
+
+utils/
+
+Utility scripts to assist with deployment.
+
+add_dags_to_composer.py - Syncs DAGs with Cloud Composer after merging changes.
+
+requirements.txt - Contains dependencies required for utilities.
+
+cloudbuild.yaml
+
+Cloud Build configuration file to automate CI/CD for Cloud Composer.
+
+README.md
+
+This documentation file explaining the project structure and workflow.
+
+Automated CI/CD Workflow
+
+Develop and Push Changes
+
+Modify or create a DAG or ingestion script.
+
+Push the changes to a development branch.
+
+Create a Pull Request (PR)
+
+Open a PR against the main branch in GitHub.
+
+Run Validation Tests with Cloud Build
+
+Cloud Build triggers validation tests.
+
+Checks DAG syntax and integrity.
+
+Approval and Merge
+
+Once reviewed, approve and merge the PR into main.
+
+Sync Changes to Cloud Composer
+
+Cloud Build syncs DAGs and dependencies with Cloud Composer.
+
+Verify DAG Execution
+
+Check if the new DAGs and updates behave as expected in Cloud Composer.
+
+This setup ensures a seamless CI/CD pipeline for managing workflows in Cloud Composer with Cloud Build integration.
 
