@@ -1,20 +1,4 @@
 steps:
-  # Debugging: Print environment variables and check directories
-  - name: 'gcr.io/cloud-builders/bash'
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        echo "DEBUG: Checking Cloud Build Variables"
-        echo "DAGS_DIRECTORY: ${_DAGS_DIRECTORY}"
-        echo "DAGS_BUCKET: ${_DAGS_BUCKET}"
-        echo "DATA_DIRECTORY: ${_DATA_DIRECTORY}"
-        echo "Current working directory: $(pwd)"
-        echo "Listing root directory:"
-        ls -l /
-        echo "Listing workspace directory:"
-        ls -l /workspace || echo "No workspace directory found"
-
   # Install dependencies
   - name: 'python'
     entrypoint: pip
