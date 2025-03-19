@@ -1,14 +1,38 @@
 steps:
-  # install dependencies
-  - name: python
+  # Debugging: Print environment variables and check directories
+  - name: 'gcr.io/cloud-builders/bash'
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        echo "DEBUG: Checking Cloud Build Variables"
+        echo "DAGS_DIRECTORY: ${_DAGS_DIRECTORY}"
+        echo "DAGS_BUCKET: ${_DAGS_BUCKET}"
+        echo "DATA_DIRECTORY: ${_DATA_DIRECTORY}"
+        echo "Current working directory: $(pwd)"
+        echo "Listing root directory:"
+        ls -l /
+        echo "Listing workspace directory:"
+        ls -l /workspace || echo "No workspace directory found"
+
+  # Install dependencies
+  - name: 'python'
     entrypoint: pip
     args: ["install", "-r", "utils/requirements.txt", "--user"]
-  
-  # run
-  - name: python
+
+  # Run Python script to upload DAGs
+  - name: 'python'
     entrypoint: python
-    args: ["utils/add_dags_to_composer.py", "--dags_directory=${_DAGS_DIRECTORY}", "--dags_bucket=${_DAGS_BUCKET}", "--data_directory=${_DATA_DIRECTORY}"]
+    args:
+      - "utils/add_dags_to_composer.py"
+      - "--dags_directory=${_DAGS_DIRECTORY}"
+      - "--dags_bucket=${_DAGS_BUCKET}"
+      - "--data_directory=${_DATA_DIRECTORY}"
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
+substitutions:
+  _DAGS_DIRECTORY: "dags/"  
+  _DAGS_BUCKET: "us-central1-demo-instance-224c07b2-bucket"
+  _DATA_DIRECTORY: "data/"
