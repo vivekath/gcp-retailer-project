@@ -13,13 +13,6 @@ steps:
       - "--dags_bucket=${_DAGS_BUCKET}"
       - "--data_directory=${_DATA_DIRECTORY}"
 
-  # Step 3: Fallback - Directly copy files using gsutil
-  - name: gcr.io/cloud-builders/gsutil
-    args: ["-m", "cp", "-r", "dags/*", "gs://${_DAGS_BUCKET}/dags/"]
-
-  - name: gcr.io/cloud-builders/gsutil
-    args: ["-m", "cp", "-r", "data/*", "gs://${_DAGS_BUCKET}/data/"]
-
 options:
   logging: CLOUD_LOGGING_ONLY
 
