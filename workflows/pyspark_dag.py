@@ -12,7 +12,7 @@ from airflow.providers.google.cloud.operators.dataproc import (
 # define the variables
 PROJECT_ID = "avd-databricks-demo"
 REGION = "us-east1"
-CLUSTER_NAME = "my-cluster-demo"
+CLUSTER_NAME = "my-demo-cluster"
 
 GCS_JOB_FILE_1 = "/home/airflow/gcs/data/INGESTION/retailerMysqlToLanding.py"
 PYSPARK_JOB_1 = {
@@ -38,7 +38,7 @@ PYSPARK_JOB_3 = {
 
 ARGS = {
     "owner": "SHAIK SAIDHUL",
-    "start_date": days_ago(1),
+    "start_date": None,
     "depends_on_past": False,
     "email_on_failure": False,
     "email_on_retry": False,
@@ -51,7 +51,7 @@ ARGS = {
 # define the dag
 with DAG(
     dag_id="pyspark_dag",
-    schedule_interval="0 5 * * *",
+    schedule_interval=None,
     description="DAG to start a Dataproc cluster, run PySpark jobs, and stop the cluster",
     default_args=ARGS,
     tags=["pyspark", "dataproc", "etl", "marvel"]

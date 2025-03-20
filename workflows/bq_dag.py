@@ -23,7 +23,7 @@ GOLD_QUERY = read_sql_file(SQL_FILE_PATH_3)
 # Define default arguments
 ARGS = {
     "owner": "SHAIK SAIDHUL",
-    "start_date": days_ago(1),
+    "start_date": None,
     "depends_on_past": False,
     "email_on_failure": False,
     "email_on_retry": False,
@@ -36,7 +36,7 @@ ARGS = {
 # Define the DAG
 with DAG(
     dag_id="bigquery_dag",
-    schedule_interval="0 5 * * *",
+    schedule_interval=None,
     description="DAG to run the bigquery jobs",
     default_args=ARGS,
     tags=["gcs", "bq", "etl", "marvel"]
