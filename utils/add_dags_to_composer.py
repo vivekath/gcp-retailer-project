@@ -7,6 +7,10 @@ from google.cloud import storage
 
 def _create_file_list(directory: str, name_replacement: str) -> tuple[str, list[str]]:
     """Copies relevant files to a temporary directory and returns the list."""
+    if not os.path.exists(directory):
+        print(f"⚠️ Warning: Directory '{directory}' does not exist. Skipping upload.")
+        return "", []  # Return empty values, so the script doesn't crash.
+
     temp_dir = tempfile.mkdtemp()
     files_to_ignore = ignore_patterns("__init__.py", "*_test.py")
     copytree(directory, f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
@@ -17,22 +21,22 @@ def upload_to_composer(directory: str, bucket_name: str, name_replacement: str) 
     """Uploads DAGs or Data files to Composer's Cloud Storage bucket."""
     temp_dir, files = _create_file_list(directory, name_replacement)
 
-    if files:
-        storage_client = storage.Client()
-        bucket = storage_client.bucket(bucket_name)
+    if not files:
+        print(f"⚠️ No files found in '{directory}'. Skipping upload.")
+        return  # Exit if no files are available.
 
-        for file in files:
-            file_gcs_path = file.replace(f"{temp_dir}/", name_replacement)
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
 
-            try:
-                blob = bucket.blob(file_gcs_path)
-                blob.upload_from_filename(file)
-                print(f"Uploaded {file} to gs://{bucket_name}/{file_gcs_path}")
-            except FileNotFoundError:
-                print(f"Error: {file} not found in {os.listdir()}. Check your directory structure.")
-                raise
-    else:
-        print(f"No files found to upload from {directory}.")
+    for file in files:
+        file_gcs_path = file.replace(f"{temp_dir}/", name_replacement)
+        try:
+            blob = bucket.blob(file_gcs_path)
+            blob.upload_from_filename(file)
+            print(f"✅ Uploaded {file} to gs://{bucket_name}/{file_gcs_path}")
+        except FileNotFoundError:
+            print(f"❌ Error: {file} not found. Ensure directory structure is correct.")
+            raise
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Upload DAGs and data to Composer bucket.")
@@ -42,8 +46,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.dags_directory:
+    if args.dags_directory and os.path.exists(args.dags_directory):
         upload_to_composer(args.dags_directory, args.dags_bucket, "dags/")
-    
-    if args.data_directory:
+    else:
+        print(f"⚠️ Skipping DAGs upload: '{args.dags_directory}' directory not found.")
+
+    if args.data_directory and os.path.exists(args.data_directory):
         upload_to_composer(args.data_directory, args.dags_bucket, "data/")
+    else:
+        print(f"⚠️ Skipping Data upload: '{args.data_directory}' directory not found.")
