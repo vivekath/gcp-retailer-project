@@ -14,7 +14,9 @@ def _create_file_list(directory: str, name_replacement: str) -> tuple[str, list[
     temp_dir = tempfile.mkdtemp()
     files_to_ignore = ignore_patterns("__init__.py", "*_test.py")
     copytree(directory, f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
-    files = glob.glob(f"{temp_dir}/*.py") if "dags" in name_replacement else glob.glob(f"{temp_dir}/*")
+    
+    # Ensure only files are returned
+    files = [f for f in glob.glob(f"{temp_dir}/**", recursive=True) if os.path.isfile(f)]
     return temp_dir, files
 
 def upload_to_composer(directory: str, bucket_name: str, name_replacement: str) -> None:
@@ -32,8 +34,10 @@ def upload_to_composer(directory: str, bucket_name: str, name_replacement: str) 
         file_gcs_path = file.replace(f"{temp_dir}/", name_replacement)
         try:
             blob = bucket.blob(file_gcs_path)
-            blob.upload_from_filename(file)
+            blob.upload_from_filename(file)  # Ensure only files are uploaded
             print(f"✅ Uploaded {file} to gs://{bucket_name}/{file_gcs_path}")
+        except IsADirectoryError:
+            print(f"⚠️ Skipping directory: {file}")
         except FileNotFoundError:
             print(f"❌ Error: {file} not found. Ensure directory structure is correct.")
             raise
