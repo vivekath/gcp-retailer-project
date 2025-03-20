@@ -13,22 +13,23 @@ from airflow.providers.google.cloud.operators.dataproc import (
 PROJECT_ID = "avd-databricks-demo"
 REGION = "us-east1"
 CLUSTER_NAME = "my-demo-cluster"
+COMPOSER_BUCKET = "us-central1-demo-instance-968eb987-bucket"
 
-GCS_JOB_FILE_1 = "/home/airflow/gcs/data/INGESTION/retailerMysqlToLanding.py"
+GCS_JOB_FILE_1 = f"gs://{COMPOSER_BUCKET}/data/INGESTION/retailerMysqlToLanding.py"
 PYSPARK_JOB_1 = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
     "pyspark_job": {"main_python_file_uri": GCS_JOB_FILE_1},
 }
 
-GCS_JOB_FILE_2 = "/home/airflow/gcs/data/INGESTION/supplierMysqlToLanding.py"
+GCS_JOB_FILE_2 = f"gs://{COMPOSER_BUCKET}/data/INGESTION/supplierMysqlToLanding.py"
 PYSPARK_JOB_2 = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
     "pyspark_job": {"main_python_file_uri": GCS_JOB_FILE_2},
 }
 
-GCS_JOB_FILE_3 = "/home/airflow/gcs/data/INGESTION/customerReviews_API.py"
+GCS_JOB_FILE_3 = f"gs://{COMPOSER_BUCKET}/data/INGESTION/customerReviews_API.py"
 PYSPARK_JOB_3 = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
