@@ -1,4 +1,3 @@
-gcloud storage buckets create gs://bkt-2-testing-2032025 --project=morning-batch-gcp-730 --default-storage-class=COLDLINE --location=US-CENTRAL1 --uniform-bucket-level-access --retention-period=150simport argparse
 import glob
 import os
 import tempfile
