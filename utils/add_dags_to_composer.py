@@ -53,11 +53,11 @@ if __name__ == "__main__":
     print(args.dags_directory, args.dags_bucket, args.data_directory)
 
     if args.dags_directory and os.path.exists(args.dags_directory):
-        upload_to_composer(args.dags_directory, args.dags_bucket, "data/")
+        upload_to_composer(args.dags_directory, args.dags_bucket, "worfklows/")
     else:
         print(f"⚠️ Skipping DAGs upload: '{args.dags_directory}' directory not found.")
 
     if args.data_directory and os.path.exists(args.data_directory):
-        upload_to_composer(args.data_directory, args.dags_bucket, "dags/")
+        upload_to_composer(args.data_directory, args.dags_bucket, "data/")
     else:
         print(f"⚠️ Skipping Data upload: '{args.data_directory}' directory not found.")
