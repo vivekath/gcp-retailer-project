@@ -55,7 +55,7 @@ if __name__ == "__main__":
     else:
         print(f"⚠️ Skipping DAGs upload: '{args.dags_directory}' directory not found.")
 
-    if args.data_directory and os.path.exists(args.data_directory):
-        upload_to_composer(args.data_directory, args.dags_bucket, "data/")
-    else:
-        print(f"⚠️ Skipping Data upload: '{args.data_directory}' directory not found.")
+    # if args.data_directory and os.path.exists(args.data_directory):
+    #     upload_to_composer(args.data_directory, args.dags_bucket, "data/")
+    # else:
+    #     print(f"⚠️ Skipping Data upload: '{args.data_directory}' directory not found.")
