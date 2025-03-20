@@ -51,7 +51,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.dags_directory and os.path.exists(args.dags_directory):
-        upload_to_composer(args.dags_directory, args.dags_bucket, "dags/")
+        upload_to_composer(args.dags_directory, args.dags_bucket, "dags")
     else:
         print(f"⚠️ Skipping DAGs upload: '{args.dags_directory}' directory not found.")
 
