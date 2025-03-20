@@ -1,10 +1,10 @@
 steps:
-  # Install dependencies
+  # Step 1: Install Python dependencies
   - name: 'python'
     entrypoint: pip
     args: ["install", "-r", "utils/requirements.txt", "--user"]
 
-  # Run Python script to upload DAGs
+  # Step 2: Run the script to upload DAGs and Data to Composer bucket
   - name: 'python'
     entrypoint: python
     args:
@@ -13,10 +13,17 @@ steps:
       - "--dags_bucket=${_DAGS_BUCKET}"
       - "--data_directory=${_DATA_DIRECTORY}"
 
+  # Step 3: Fallback - Directly copy files using gsutil
+  - name: gcr.io/cloud-builders/gsutil
+    args: ["-m", "cp", "-r", "dags/*", "gs://${_DAGS_BUCKET}/dags/"]
+
+  - name: gcr.io/cloud-builders/gsutil
+    args: ["-m", "cp", "-r", "data/*", "gs://${_DAGS_BUCKET}/data/"]
+
 options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
-  _DAGS_DIRECTORY: "dags/"  
-  _DAGS_BUCKET: "us-central1-demo-instance-224c07b2-bucket"
+  _DAGS_DIRECTORY: "dags/"
+  _DAGS_BUCKET: "us-central1-demo-instance-968eb987-bucket"
   _DATA_DIRECTORY: "data/"
