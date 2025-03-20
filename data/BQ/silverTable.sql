@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.customers`
     is_active BOOL
 );
 
+
 --Step 2: Update Existing Active Records if There Are Changes
 MERGE INTO  `avd-databricks-demo.silver_dataset.customers` target
 USING 
