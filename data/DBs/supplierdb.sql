@@ -17,8 +17,7 @@ CREATE TABLE product_suppliers (
     product_id INT,
     supply_price DECIMAL(10,2),
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (supplier_id, product_id),
-    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+    PRIMARY KEY (supplier_id, product_id)
 );
 
 -- Insert 100 supplier records
