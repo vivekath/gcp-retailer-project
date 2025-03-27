@@ -16,6 +16,7 @@ JOIN `avd-databricks-demo.silver_dataset.products` p ON oi.product_id = p.produc
 JOIN `avd-databricks-demo.silver_dataset.categories` c ON p.category_id = c.category_id
 WHERE o.is_active = TRUE
 GROUP BY 1, 2, 3, 4, 5;
+
 -----------------------------------------------------------------------------------------------------------
 -- 2. Customer Engagement Metrics (customer_engagement)
 CREATE TABLE IF NOT EXISTS `avd-databricks-demo.gold_dataset.customer_engagement`
@@ -33,6 +34,7 @@ LEFT JOIN `avd-databricks-demo.silver_dataset.orders` o ON c.customer_id = o.cus
 LEFT JOIN `avd-databricks-demo.silver_dataset.order_items` oi ON o.order_id = oi.order_id
 WHERE c.is_active = TRUE
 GROUP BY 1, 2, 6;
+
 -----------------------------------------------------------------------------------------------------------
 --3. Product Performance (product_performance)
 
@@ -57,6 +59,7 @@ LEFT JOIN `avd-databricks-demo.silver_dataset.order_items` oi ON p.product_id = 
 LEFT JOIN `avd-databricks-demo.silver_dataset.customer_reviews` cr ON p.product_id = cr.product_id
 WHERE p.is_quarantined = FALSE
 GROUP BY 1, 2, 3, 4, 5, 6;
+
 -----------------------------------------------------------------------------------------------------------
 --4. Supplier Performance (supplier_analysis)
 CREATE TABLE IF NOT EXISTS `avd-databricks-demo.gold_dataset.supplier_analysis`
@@ -72,6 +75,7 @@ LEFT JOIN `avd-databricks-demo.silver_dataset.product_suppliers` ps ON s.supplie
 LEFT JOIN `avd-databricks-demo.silver_dataset.order_items` oi ON ps.product_id = oi.product_id
 WHERE s.is_quarantined = FALSE
 GROUP BY 1, 2;
+
 -----------------------------------------------------------------------------------------------------------
 --5. Customer Reviews Summary (customer_reviews_summary)
 CREATE TABLE IF NOT EXISTS `avd-databricks-demo.gold_dataset.customer_reviews_summary`
@@ -87,4 +91,5 @@ FROM `avd-databricks-demo.silver_dataset.products` p
 LEFT JOIN `avd-databricks-demo.silver_dataset.customer_reviews` cr ON p.product_id = cr.product_id
 WHERE p.is_quarantined = FALSE
 GROUP BY 1, 2;
+
 -----------------------------------------------------------------------------------------------------------
