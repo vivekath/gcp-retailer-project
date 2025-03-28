@@ -278,6 +278,7 @@ SELECT
   END AS is_quarantined
   
 FROM `avd-databricks-demo.bronze_dataset.suppliers`;
+
 -------------------------------------------------------------------------------------------------------------
 
 --Step 1: Create the customer_reviews Table in the Silver Layer
